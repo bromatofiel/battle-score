@@ -28,7 +28,7 @@ services:
     healthcheck:
       test: "exit 0"
     ports:
-      - 5432:5432
+      - 5004:5432
 
   cache:
     image: redis:7.4.7-alpine
@@ -38,14 +38,14 @@ services:
     volumes:
       - redis:/data
     ports:
-      - 6379:6379
+      - 6004:6379
 
   server:
     image: 'bts_backend'
     container_name: 'bts_server'
     build:
       context: .
-      target: runner
+      target: devrunner
     entrypoint: /app/entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000 --traceback
     stdin_open: true

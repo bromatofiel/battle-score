@@ -6,14 +6,16 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
-# Copy from the cache instead of linking since it's a separate stage
-ENV UV_LINK_MODE=copy
+# Install build dependencies (removing apt list lighten docker image size)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc build-essential python3-dev libssl-dev libffi-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-install-project --no-dev
+# Install dependencies into a central location (requirements.txt is used to avoid conflicts with local .venv)
+COPY pyproject.toml uv.lock* README.md LICENSE.md* ./
+RUN uv export --no-dev -o requirements.txt && \
+    uv pip install --system -r requirements.txt
+
 
 # ===== runner steps =====
 FROM python:3.13.8-slim AS runner
@@ -25,7 +27,6 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBCONF_NOWARNINGS=yes
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
-ENV PATH="/app/.venv/bin:$PATH"
 
 # System layer
 COPY Aptfile Aptfile
@@ -35,8 +36,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir /static /logs
 
-# Dependencies layer
-COPY --from=builder /app/.venv /app/.venv
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Set cache
 RUN tldextract --update
@@ -51,3 +53,13 @@ COPY . .
 
 # Statics
 RUN python manage.py collectstatic --noinput
+
+
+# ===== devrunner step =====
+FROM runner AS devrunner
+
+# Install uv for development/bootstrapping
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Install missing dev dependencies (into system python for dev image)
+RUN uv pip install --system .[dev] || true

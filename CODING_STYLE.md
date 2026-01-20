@@ -54,7 +54,17 @@ We use the following tools to enforce code quality and style. These are listed i
 - **Inheritance**: All models should inherit from `core.models.BaseModel` instead of `django.db.models.Model`.
     - `BaseModel` provides standard fields like `date_created` and `date_updated`.
     - It also includes helpers (`diff()` for tracking changes, `grab()` for fetching objects, ...).
+- **Enums**: All enums should be defined in the model using `core.utils.enum`.
 <!-- - **Sealing**: The project uses `django-seal`. Models can be sealed to prevent accidental queries. -->
+
+### Django Settings
+- **Organisation**:
+    - All settings should be defined in `core/settings/base.py`.
+    - All specific environments must inherit from `core/settings/base.py`.
+    - Production specific settings should be defined in `core/settings/prod.py`.
+    - Development specific settings should be defined in `core/settings/dev.py`.
+    - Test specific settings should be defined in `core/settings/test.py`.
+- **Variables**: Must use library `decouple` to define, load, initialize, and validate environment variables.
 
 ### Imports
 
@@ -72,6 +82,8 @@ Guidelines for writing tests in the project:
 - **Data Initialization**: Use `setUpTestData` (class method) instead of `setUp` to initialize data whenever possible. This improves test performance by creating data once per class.
 - **Assertions**: Prefer internal control methods defined in `TestCase` class over standard assertions (e.g., `assertAttributesEqual`, `assertNumQueries`, `assertApiException`, `assert_model_differences`, `assertApiEqual`).
 - **Side effects**: always control side effects in tests (`assertNumQueries` for db queries, `assert_model_differences` for created/deleted rows, `assert_nb_slacks` for slack messages, `assert_nb_emails` for emails, `assert_crm_equal` for CRM changes, ...).
+- **Mockers**: always use mockers for external services (e.g., `pytest-mocker` for mocking external services).
+- **Fixtures**: always use fixtures to initialize data (e.g., `pytest-factoryboy` for fixtures).
 
 ## Frontend (javascript & CSS)
 

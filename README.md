@@ -49,6 +49,27 @@ UV is required to install BattleScore. See https://docs.astral.sh/uv/getting-sta
 uv sync
 ```
 
+
+# Configuration
+
+To customize django, please use the `.env` file (NEVER commit it). Example:
+
+```ini
+SECRET_KEY=s3cr3t(*_*)
+ALLOWED_HOSTS=*
+DEBUG_QUERIES=False
+LOGGING_COLORED=True
+API_STATIC_CACHE_DURATION=0
+
+USE_LOCAL_SERVER=True
+USE_LOCAL_MEDIA=True
+USE_LOCAL_STATIC=True
+
+```
+
+NB: for more exhaustive killing options, ask a buddy dev ;)
+
+
 # License
 
 BattleScore is released under the **Business Source License (BSL)**.
