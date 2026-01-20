@@ -4,29 +4,204 @@
 {% block title %}{% trans "Accueil" %}{% endblock %}
 
 {% block content %}
-<div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl w-full space-y-8 glass p-12 rounded-3xl shadow-2xl text-center">
-        <h1 class="text-6xl font-bold tracking-tight text-white">
-            <span class="text-gradient">Battle Score</span>
-        </h1>
-        <p class="text-xl text-slate-400">
-            {% trans "Bienvenue sur votre plateforme de gestion de tournois." %}
-        </p>
 
-        {% if user.is_authenticated %}
-            <p class="text-lg text-slate-300">
-                {% trans "Bonjour" %}, {{ user.profile.pseudo }} !
-            </p>
-        {% else %}
-            <div class="flex justify-center gap-4 mt-8">
-                <a href="{% url 'login' %}" class="px-8 py-3 rounded-xl font-semibold text-white btn-primary">
-                    {% trans "Se connecter" %}
-                </a>
-                <a href="{% url 'signup' %}" class="px-8 py-3 rounded-xl font-semibold border border-white/10 hover:bg-white/5 transition-all">
-                    {% trans "S'inscrire" %}
+<!-- Hero Section -->
+<section class="pt-40 pb-20 px-6 overflow-hidden">
+    <div class="max-w-7xl mx-auto text-center relative">
+        <span class="inline-block px-4 py-1.5 rounded-full glass border-white/10 text-xs font-semibold text-blue-400 mb-6 uppercase tracking-widest animate-fade-in">
+            {% trans "Nouveau : Mode Tournoi Automatisé" %}
+        </span>
+        <h1 class="text-7xl lg:text-8xl font-black tracking-tight text-white mb-8 animate-fade-in-up">
+            {% trans "Gérez vos tournois" %}<br>
+            <span class="text-gradient">{% trans "sans les tracas." %}</span>
+        </h1>
+        <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-12 animate-fade-in-up" style="animation-delay: 100ms">
+            {% trans "Battle Score est la plateforme ultime pour organiser, suivre et partager vos compétitions en temps réel. Simple, rapide et élégant." %}
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style="animation-delay: 200ms">
+            <a href="{% url 'signup' %}" class="px-10 py-4 rounded-2xl btn-primary text-lg font-bold text-white shadow-2xl shadow-blue-500/20">
+                {% trans "Commencer gratuitement" %}
+            </a>
+            <a href="#pricing" class="px-10 py-4 rounded-2xl glass border-white/10 text-lg font-bold text-white hover:bg-white/5 transition-all">
+                {% trans "Voir les forfaits" %}
+            </a>
+        </div>
+
+        <!-- Social Proof -->
+        <div class="mt-24 pt-10 border-t border-white/5 animate-fade-in" style="animation-delay: 400ms">
+            <div class="flex flex-wrap justify-center items-center gap-12 lg:gap-24 opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 duration-500">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white">10k+</div>
+                    <div class="text-xs text-slate-500 uppercase tracking-widest mt-1">{% trans "Organisateurs" %}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white">50k+</div>
+                    <div class="text-xs text-slate-500 uppercase tracking-widest mt-1">{% trans "Matchs joués" %}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white">1.2M</div>
+                    <div class="text-xs text-slate-500 uppercase tracking-widest mt-1">{% trans "Scores enregistrés" %}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white">500+</div>
+                    <div class="text-xs text-slate-500 uppercase tracking-widest mt-1">{% trans "Clubs fidèles" %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-32 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6">{% trans "Choisissez votre puissance" %}</h2>
+            <p class="text-lg text-slate-400">{% trans "Un forfait adapté pour chaque niveau de compétition." %}</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 relative items-stretch">
+            <!-- Free Plan -->
+            <div class="glass p-10 rounded-3xl border-white/5 flex flex-col hover:border-white/10 transition-all duration-300">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-white mb-2">{% trans "Free" %}</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-white">0€</span>
+                        <span class="text-slate-500 text-sm">/ {% trans "mois" %}</span>
+                    </div>
+                </div>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    {% trans "Parfait pour s'initier et gérer un petit événement amical." %}
+                </p>
+                <ul class="space-y-4 mb-10 flex-grow">
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "1 tournoi par mois" %}
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <strong>{% trans "Max 10 équipes" %}</strong>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Tableau de scores temps réel" %}
+                    </li>
+                </ul>
+                <a href="{% url 'signup' %}" class="w-full py-4 rounded-xl glass border-white/10 text-center font-bold text-white hover:bg-white/5 transition-all">
+                    {% trans "Choisir Free" %}
                 </a>
             </div>
-        {% endif %}
+
+            <!-- Premium Plan -->
+            <div class="glass p-10 rounded-3xl border-blue-500/20 relative shadow-2xl scale-105 z-10 bg-slate-900/40 flex flex-col border-white/5 overflow-hidden">
+                <div class="absolute top-0 right-0 py-1.5 px-6 rounded-bl-2xl bg-blue-600 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    {% trans "Populaire" %}
+                </div>
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-white mb-2">{% trans "Premium" %}</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-white">10€</span>
+                        <span class="text-slate-500 text-sm">/ {% trans "an" %}</span>
+                    </div>
+                </div>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    {% trans "Pour les clubs qui organisent régulièrement des tournois format standard." %}
+                </p>
+                <ul class="space-y-4 mb-10 flex-grow">
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <strong>{% trans "Tournois illimités" %}</strong>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Jusqu'à 10 équipes / tournoi" %}
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Connexion via QR Code" %}
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Support email prioritaire" %}
+                    </li>
+                </ul>
+                <a href="{% url 'signup' %}" class="w-full py-4 rounded-xl btn-primary text-center font-bold text-white shadow-xl shadow-blue-500/20">
+                    {% trans "Passer au Premium" %}
+                </a>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="glass p-10 rounded-3xl border-white/5 flex flex-col hover:border-white/10 transition-all duration-300">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-white mb-2">{% trans "Pro" %}</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-white">100€</span>
+                        <span class="text-slate-500 text-sm">/ {% trans "an" %}</span>
+                    </div>
+                </div>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    {% trans "La solution ultime pour les tournois de grande envergure." %}
+                </p>
+                <ul class="space-y-4 mb-10 flex-grow">
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <strong>{% trans "No limit (équipes, tournois)" %}</strong>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Statistiques avancées & Graphiques" %}
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Websockets (Temps réel pur)" %}
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-slate-300">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        {% trans "Support technique dédié" %}
+                    </li>
+                </ul>
+                <a href="{% url 'signup' %}" class="w-full py-4 rounded-xl glass border-white/10 text-center font-bold text-white hover:bg-white/5 transition-all">
+                    {% trans "Contacter l'équipe Pro" %}
+                </a>
+            </div>
+        </div>
     </div>
-</div>
+</section>
+
+<!-- Footer -->
+<footer class="py-20 px-6 border-t border-white/5 glass">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+        <div class="text-xl font-bold tracking-tighter text-white flex items-center gap-2 grayscale opacity-50">
+            <span class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-[10px]">BS</span>
+            <span>Battle Score</span>
+        </div>
+        <div class="flex gap-10 text-sm text-slate-500">
+            <a href="#" class="hover:text-white transition-colors">{% trans "Conditions" %}</a>
+            <a href="#" class="hover:text-white transition-colors">{% trans "Confidentialité" %}</a>
+            <a href="#" class="hover:text-white transition-colors">{% trans "Contact" %}</a>
+        </div>
+        <div class="text-sm text-slate-500">
+            © 2026 Battle Score. {% trans "Fait avec passion pour le sport." %}
+        </div>
+    </div>
+</footer>
+
+<style>
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
 {% endblock %}

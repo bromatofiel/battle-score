@@ -49,7 +49,15 @@ We use the following tools to enforce code quality and style. These are listed i
     - *Note*: `isort` is configured with `multi_line_output=5` (Hanging Grid Grouped).
 - **Indentation**: 4 spaces.
 
-### Django Models
+## Imports
+
+Imports are sorted by `ruff`. The configuration is in `ruff.toml`.
+- **Order**: Standard library -> Third party -> Local application.
+- **Style**: Hanging Grid Grouped.
+
+## Django
+
+### Models
 
 - **Inheritance**: All models should inherit from `core.models.BaseModel` instead of `django.db.models.Model`.
     - `BaseModel` provides standard fields like `date_created` and `date_updated`.
@@ -57,25 +65,23 @@ We use the following tools to enforce code quality and style. These are listed i
 - **Enums**: All enums should be defined in the model using `core.utils.enum`.
 <!-- - **Sealing**: The project uses `django-seal`. Models can be sealed to prevent accidental queries. -->
 
-### Django Settings
+### Settings
 - **Organisation**:
     - All settings should be defined in `core/settings/base.py`.
     - All specific environments must inherit from `core/settings/base.py`.
     - Production specific settings should be defined in `core/settings/prod.py`.
     - Development specific settings should be defined in `core/settings/dev.py`.
     - Test specific settings should be defined in `core/settings/test.py`.
-- **Variables**: Must use library `decouple` to define, load, initialize, and validate environment variables.
+- **Environment variables**: Must use library `decouple` to define, load, initialize, and validate environment variables.
+
+### Forms and Views
+- **Inheritance**: Prefer using ModelForm and FormView whenever possible.
 
 ### Security
 - **Authentication**: Use Django authentication.
 - **Authorization**: Use Django permissions.
 - **Cryptography**: Use Django cryptography.
 
-### Imports
-
-Imports are sorted by `ruff`. The configuration is in `ruff.toml`.
-- **Order**: Standard library -> Third party -> Local application.
-- **Style**: Hanging Grid Grouped.
 
 ## Testing
 

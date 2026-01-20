@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Paramètres du Compte" %}{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-12 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-12">
+            <h1 class="text-4xl font-bold text-white mb-2">{% trans "Paramètres" %}</h1>
+            <p class="text-slate-400">{% trans "Gérez vos informations personnelles et de facturation." %}</p>
+        </div>
+
+        <div class="space-y-8">
+            <!-- Account Settings (Email) -->
+            <div class="glass p-8 rounded-3xl border-white/5 mt-8">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    {% trans "Compte" %}
+                </h2>
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_name" value="user">
+                    {% for field in user_form %}
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-slate-400 ml-1">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<p class="text-red-400 text-xs mt-1 ml-1">{{ field.errors.0 }}</p>{% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="pt-4">
+                        <button type="submit" class="px-6 py-2 rounded-xl btn-primary text-sm font-bold text-white transition-all">
+                            {% trans "Mettre à jour l'email" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Profile Settings (Pseudo, Avatar) -->
+            <div class="glass p-8 rounded-3xl border-white/5">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    {% trans "Profil Public" %}
+                </h2>
+                <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_name" value="profile">
+                    {% for field in profile_form %}
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-slate-400 ml-1">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<p class="text-red-400 text-xs mt-1 ml-1">{{ field.errors.0 }}</p>{% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="pt-4">
+                        <button type="submit" class="px-6 py-2 rounded-xl btn-primary text-sm font-bold text-white transition-all">
+                            {% trans "Enregistrer le profil" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Client Settings (Billing) -->
+            <div class="glass p-8 rounded-3xl border-white/5">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    {% trans "Informations de Facturation" %}
+                </h2>
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_name" value="client">
+                    {% for field in client_form %}
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-slate-400 ml-1">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<p class="text-red-400 text-xs mt-1 ml-1">{{ field.errors.0 }}</p>{% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="pt-4">
+                        <button type="submit" class="px-6 py-2 rounded-xl btn-primary text-sm font-bold text-white transition-all">
+                            {% trans "Mettre à jour la facturation" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="glass p-8 rounded-3xl border-red-500/20 bg-red-500/5">
+                <h2 class="text-xl font-bold text-red-500 mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    {% trans "Zone de Danger" %}
+                </h2>
+                <p class="text-sm text-slate-400 mb-6 leading-relaxed">
+                    {% trans "Une fois votre compte supprimé, toutes vos données seront définitivement effacées. Cette action est irréversible." %}
+                </p>
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_name" value="delete_account">
+                    <div class="space-y-1">
+                        <label class="block text-sm font-medium text-slate-400 ml-1">{{ delete_form.password.label }}</label>
+                        {{ delete_form.password }}
+                        {% if delete_form.password.errors %}<p class="text-red-400 text-xs mt-1 ml-1">{{ delete_form.password.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="px-6 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-sm font-bold text-white transition-all shadow-lg shadow-red-600/20">
+                            {% trans "Supprimer mon compte" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="{% url 'dashboard' %}" class="text-sm font-semibold text-slate-500 hover:text-white transition-colors">
+                ← {% trans "Retour au Tableau de Bord" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -19,3 +19,13 @@ class UserController:
         Profile.objects.create(user=user, pseudo=pseudo)
 
         return user
+
+    @staticmethod
+    def delete_user(user, password):
+        """
+        Check password and delete the user.
+        """
+        if user.check_password(password):
+            user.delete()
+            return True
+        return False
