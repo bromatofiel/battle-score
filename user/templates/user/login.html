@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Connexion" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 glass p-8 rounded-3xl shadow-2xl animate-fade-in-up">
+        <div>
+            <h2 class="mt-6 text-center text-4xl font-bold tracking-tight text-white">
+                <span class="text-gradient">Battle Score</span>
+            </h2>
+            <p class="mt-2 text-center text-sm text-slate-400">
+                {% trans "Accédez à vos tournois" %}
+            </p>
+        </div>
+
+        <form class="mt-8 space-y-6" method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div class="space-y-1">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-300 ml-1">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-400 text-xs mt-1 ml-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                        {% trans "Mot de passe oublié ?" %}
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white btn-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% trans "Se connecter" %}
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center mt-6">
+            <p class="text-sm text-slate-400">
+                {% trans "Pas encore de compte ?" %}
+                <a href="{% url 'signup' %}" class="font-medium text-purple-400 hover:text-purple-300 transition-colors ml-1">
+                    {% trans "Inscrivez-vous gratuitement" %}
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

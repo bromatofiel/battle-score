@@ -46,3 +46,7 @@ show:
 
 migrations:
     {{ DJANGO }} makemigrations
+
+# Run tests
+test *args:
+    {{ DJANGO }} test {{ args }}

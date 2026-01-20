@@ -66,6 +66,11 @@ We use the following tools to enforce code quality and style. These are listed i
     - Test specific settings should be defined in `core/settings/test.py`.
 - **Variables**: Must use library `decouple` to define, load, initialize, and validate environment variables.
 
+### Security
+- **Authentication**: Use Django authentication.
+- **Authorization**: Use Django permissions.
+- **Cryptography**: Use Django cryptography.
+
 ### Imports
 
 Imports are sorted by `ruff`. The configuration is in `ruff.toml`.
@@ -85,7 +90,7 @@ Guidelines for writing tests in the project:
 - **Mockers**: always use mockers for external services (e.g., `pytest-mocker` for mocking external services).
 - **Fixtures**: always use fixtures to initialize data (e.g., `pytest-factoryboy` for fixtures).
 
-## Frontend (javascript & CSS)
+## Frontend (django forms & javascript & CSS)
 
 ### File Types
 - **JavaScript**: `*.js`
@@ -100,6 +105,20 @@ Guidelines for writing tests in the project:
 
 ### Frameworks
 - **TailwindCSS**: Used for utility-first styling.
+
+### Translations
+- **Translation**: Use `gettext` for translations.
+
+### Stack
+- **HTMX**: Used for client-side interactions.
+- **Websockets**: Used for real-time interactions (new/updated participant/match/score, ...).
+- **Django Forms**: Use 1 View per form and respect project structure.
+
+### UX
+- **Responsive Design**: Use TailwindCSS for responsive design.
+- **Accessibility**: Use ARIA roles and attributes.
+- **Performance**: Use lazy loading for images and videos.
+- **Graphic charts**: Use Chart.js for graphic charts.
 
 ## Git & Workflow
 

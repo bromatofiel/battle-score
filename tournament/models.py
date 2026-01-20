@@ -1,13 +1,13 @@
 from django.db import models
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-
 from core.models import BaseModel
+from django.conf import settings
+
 
 class Tournament(BaseModel):
     """
     A tournament with settings.
     """
+
     name = models.CharField(max_length=255)
     nb_teams = models.PositiveIntegerField(default=0)
     nb_players_per_team = models.PositiveIntegerField(default=0)
@@ -18,20 +18,24 @@ class Tournament(BaseModel):
     def __str__(self):
         return self.name
 
+
 class Team(BaseModel):
     """
     A group of participants linked to a tournament.
     """
+
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name="teams")
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.name} ({self.tournament.name})"
 
+
 class Participant(BaseModel):
     """
     A user participating in a tournament with a role.
     """
+
     ROLE_CHOICES = [
         ("ADMIN", "Admin"),
         ("PLAYER", "Player"),
@@ -46,12 +50,14 @@ class Participant(BaseModel):
         unique_together = ("user", "tournament")
 
     def __str__(self):
-        return f"{self.user.username} in {self.tournament.name}"
+        return f"{self.user} in {self.tournament.name} [{self.role}]"
+
 
 class Match(BaseModel):
     """
     A match between two teams.
     """
+
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name="matches")
     teams = models.ManyToManyField(Team, related_name="matches")
     ordering = models.PositiveIntegerField(default=0)
@@ -63,10 +69,12 @@ class Match(BaseModel):
     def __str__(self):
         return f"Match {self.ordering} in {self.tournament.name}"
 
+
 class Score(BaseModel):
     """
     A score linked to a match for a specific team.
     """
+
     match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name="scores")
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     value = models.IntegerField(default=0)
@@ -74,10 +82,12 @@ class Score(BaseModel):
     class Meta:
         unique_together = ("match", "team")
 
+
 class Classment(BaseModel):
     """
     A classment linked to a team in a tournament.
     """
+
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name="classments")
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="classments")
     rank = models.PositiveIntegerField()

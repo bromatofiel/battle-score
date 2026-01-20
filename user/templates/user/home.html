@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Accueil" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full space-y-8 glass p-12 rounded-3xl shadow-2xl text-center">
+        <h1 class="text-6xl font-bold tracking-tight text-white">
+            <span class="text-gradient">Battle Score</span>
+        </h1>
+        <p class="text-xl text-slate-400">
+            {% trans "Bienvenue sur votre plateforme de gestion de tournois." %}
+        </p>
+
+        {% if user.is_authenticated %}
+            <p class="text-lg text-slate-300">
+                {% trans "Bonjour" %}, {{ user.profile.pseudo }} !
+            </p>
+        {% else %}
+            <div class="flex justify-center gap-4 mt-8">
+                <a href="{% url 'login' %}" class="px-8 py-3 rounded-xl font-semibold text-white btn-primary">
+                    {% trans "Se connecter" %}
+                </a>
+                <a href="{% url 'signup' %}" class="px-8 py-3 rounded-xl font-semibold border border-white/10 hover:bg-white/5 transition-all">
+                    {% trans "S'inscrire" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

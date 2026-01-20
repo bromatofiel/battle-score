@@ -1,10 +1,10 @@
 import uuid
 
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-
 from core.models import BaseModel
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import AbstractUser
+
 
 class User(AbstractUser, BaseModel):
     """
@@ -19,29 +19,25 @@ class User(AbstractUser, BaseModel):
     uid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=150, unique=True, blank=True)
 
-    def __set_pseudo(self):
-        if not self.pseudo:
-            self.pseudo = self.username
-
-    def save(self, *args, **kwargs):
-        self.__set_pseudo()
-        super().save(*args, **kwargs)
 
 class Profile(BaseModel):
     """
     Private customer profile linked to a user.
     """
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     pseudo = models.CharField(max_length=50, blank=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
-    
+
     def __str__(self):
         return f"Profile of {self.user.username}"
+
 
 class Client(BaseModel):
     """
     Billing profile (company, association, ...) linked to a user.
     """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="clients")
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True)
