@@ -55,7 +55,7 @@
     </div>
 
     <!-- Header / Navbar -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4">
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 {% if user.is_authenticated %}hidden md:block{% endif %}">
         <div class="{% if not user.is_authenticated %}max-w-7xl mx-auto{% else %}w-full{% endif %} flex justify-between items-center glass px-8 py-3 rounded-2xl shadow-lg border-white/5">
             <a href="{% url 'home' %}" class="text-2xl font-bold tracking-tighter text-white flex items-center gap-2">
                 <span class="w-8 h-8 rounded-lg btn-primary flex items-center justify-center text-xs">BS</span>
@@ -148,6 +148,88 @@
 
         {% block content %}{% endblock %}
     </main>
+
+    {% if user.is_authenticated %}
+        <!-- Mobile Bottom Navbar -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2">
+            <div class="glass rounded-2xl border-white/10 flex justify-around items-center py-2 px-4 shadow-2xl backdrop-blur-xl">
+                <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors py-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="text-[10px] font-medium">{% trans "Accueil" %}</span>
+                </a>
+                <a href="#" class="flex flex-col items-center -mt-8">
+                    <div class="w-14 h-14 rounded-full btn-primary flex items-center justify-center text-white shadow-lg shadow-blue-500/40 border-4 border-slate-950">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                </a>
+                <button id="mobile-menu-trigger" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors py-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span class="text-[10px] font-medium">{% trans "Moi" %}</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Fullscreen Mobile Menu -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 z-[60] glass hidden transition-all duration-300 opacity-0 backdrop-blur-2xl">
+            <div class="h-full flex flex-col p-8">
+                <div class="flex justify-between items-center mb-12">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center text-xs font-bold text-white">BS</div>
+                        <span class="text-xl font-bold text-white">Battle Score</span>
+                    </div>
+                    <button id="mobile-menu-close" class="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div class="mb-4">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest ml-4 mb-4">{% trans "Compte" %}</p>
+                        <a href="{% url 'settings' %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <span class="font-medium">{% trans "Paramètres" %}</span>
+                        </a>
+                    </div>
+
+                    <a href="{% url 'logout' %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span class="font-medium">{% trans "Déconnexion" %}</span>
+                    </a>
+                </div>
+
+                <div class="mt-auto py-8 text-center">
+                    <p class="text-sm text-slate-500">Battle Score v1.0</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const trigger = document.getElementById('mobile-menu-trigger');
+                const close = document.getElementById('mobile-menu-close');
+                const overlay = document.getElementById('mobile-menu-overlay');
+
+                function openMobileMenu() {
+                    overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    requestAnimationFrame(() => {
+                        overlay.classList.add('opacity-100');
+                    });
+                }
+
+                function closeMobileMenu() {
+                    overlay.classList.remove('opacity-100');
+                    document.body.style.overflow = '';
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                    }, 300);
+                }
+
+                trigger.addEventListener('click', openMobileMenu);
+                close.addEventListener('click', closeMobileMenu);
+            });
+        </script>
+    {% endif %}
 
     {% block extra_js %}{% endblock %}
 </body>
