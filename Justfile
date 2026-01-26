@@ -37,6 +37,10 @@ ssh:
 shell:
     {{ PYTHON }} manage.py shell_plus
 
+add *args:
+    {{ DOCKER_TTY }} {{ CONTAINER_SERVER }} uv add {{ args }}
+
+
 # Model targets
 migrate:
     {{ DJANGO }} migrate

@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Créer un Tournoi" %}{% endblock %}
+
+{% block content %}
+<div class="pt-32 pb-12 px-6 min-h-screen">
+    <div class="max-w-4xl mx-auto" x-data="tournamentForm()">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-2">{% trans "Nouveau Tournoi" %}</h1>
+            <p class="text-slate-400">{% trans "Organisez votre compétition en quelques clics." %}</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="flex justify-between items-center mb-12 relative">
+            <div class="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10 -translate-y-1/2"></div>
+
+            <!-- Step 1 Navigation -->
+            <button @click="goToStep(1)" class="flex flex-col items-center gap-2 group transition-all" :class="step >= 1 ? 'opacity-100' : 'opacity-40'">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all border-2"
+                    :class="step === 1 ? 'btn-primary border-transparent text-white scale-110 shadow-lg shadow-blue-500/20' : step > 1 ? 'bg-green-500 border-transparent text-white' : 'glass border-white/10 text-slate-500'">
+                    <template x-if="step > 1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </template>
+                    <template x-if="step <= 1"><span>1</span></template>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-center">
+                    <span :class="step === 1 ? 'text-blue-400' : 'text-slate-500'">{% trans "Sport" %}</span>
+                    <div x-show="step > 1" class="text-white normal-case font-medium mt-0.5" x-text="sportDisplay"></div>
+                </div>
+            </button>
+
+            <!-- Step 2 Navigation -->
+            <button @click="goToStep(2)" :disabled="step < 2" class="flex flex-col items-center gap-2 group transition-all" :class="step >= 2 ? 'opacity-100' : 'opacity-40'">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all border-2"
+                    :class="step === 2 ? 'btn-primary border-transparent text-white scale-110 shadow-lg shadow-blue-500/20' : step > 2 ? 'bg-green-500 border-transparent text-white' : 'glass border-white/10 text-slate-500'">
+                    <template x-if="step > 2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </template>
+                    <template x-if="step <= 2"><span>2</span></template>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-center">
+                    <span :class="step === 2 ? 'text-blue-400' : 'text-slate-500'">{% trans "Équipes" %}</span>
+                    <div x-show="step > 2" class="text-white normal-case font-medium mt-0.5">
+                        <span x-text="nbTeams"></span>/ <span x-text="nbPlayersPerTeam"></span>
+                    </div>
+                </div>
+            </button>
+
+            <!-- Step 3 Navigation -->
+            <button @click="goToStep(3)" :disabled="step < 3" class="flex flex-col items-center gap-2 group transition-all" :class="step >= 3 ? 'opacity-100' : 'opacity-40'">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all border-2"
+                    :class="step === 3 ? 'btn-primary border-transparent text-white scale-110 shadow-lg shadow-blue-500/20' : 'glass border-white/10 text-slate-500'">
+                    <span>3</span>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-center">
+                    <span :class="step === 3 ? 'text-blue-400' : 'text-slate-500'">{% trans "Détails" %}</span>
+                    <div x-show="step === 3 && name" class="text-white normal-case font-medium mt-0.5 truncate max-w-[80px]" x-text="name"></div>
+                </div>
+            </button>
+        </div>
+
+        <form method="POST" class="space-y-8">
+            {% csrf_token %}
+
+            <!-- Step 1: Sport Selection -->
+            <div x-show="step === 1" x-transition.opacity.duration.300ms class="space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {% for value, display in sport_choices.items %}
+                    <label class="relative cursor-pointer group">
+                        <input type="radio" name="sport" value="{{ value }}" class="peer hidden"
+                               x-model="sport" @change="onSportChange()">
+                        <div class="glass p-8 rounded-3xl border-2 border-white/5 group-hover:border-blue-500/30 transition-all text-center peer-checked:bg-blue-600/20 peer-checked:border-blue-500 peer-checked:shadow-2xl peer-checked:shadow-blue-600/40 peer-checked:scale-[1.02]">
+                            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform peer-checked:bg-white/10">
+                                {% if value == 'PETANQUE' %}
+                                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/></svg>
+                                {% else %}
+                                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                {% endif %}
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">{{ display }}</h3>
+                            <p class="text-xs text-slate-400 peer-checked:text-blue-100">
+                                {% if value == 'PETANQUE' %}
+                                    {% trans "Gestion des points classique." %}
+                                {% else %}
+                                    {% trans "Adaptable à tous les types de sports." %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 2: Numbers Selection -->
+            <div x-show="step === 2" x-transition.opacity.duration.300ms class="space-y-12">
+                <div class="glass p-8 rounded-3xl border-white/5 space-y-10">
+                    <!-- Teams -->
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <label class="text-lg font-bold text-white">{% trans "Nombre d'équipes" %}</label>
+                            <input type="number" x-model="nbTeams" min="2" max="100"
+                                   class="w-20 text-center glass border-white/10 rounded-xl py-2 font-bold text-blue-400 focus:border-blue-500 outline-none">
+                        </div>
+                        <input type="range" x-model="nbTeams" min="2" max="100"
+                               class="w-full h-2 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            <span>2 {% trans "équipes" %}</span>
+                            <span>100 {% trans "équipes" %}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">
+                            {% trans "Nombre d'équipes initiales créées pour le tournois. Vous pourrez en ajouter d'autres et en supprimer par la suite." %}
+                        </p>
+                    </div>
+
+                    <hr class="border-white/5">
+
+                    <!-- Players per team -->
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <label class="text-lg font-bold text-white">{% trans "Joueurs par équipe" %}</label>
+                            <select x-model="nbPlayersPerTeam" class="w-24 text-center glass border-white/10 rounded-xl py-2 font-bold text-blue-400 focus:border-blue-500 outline-none">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                        </div>
+                        <p class="text-xs text-slate-500">{% trans "Utilisé uniquement si vous optez pour la composition automatique des équipes, vous pourrez toujours ajouter ou retirer des membres à une équipe." %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Optional Details -->
+            <div x-show="step === 3" x-transition.opacity.duration.300ms class="space-y-6">
+                <div class="glass p-8 rounded-3xl border-white/5 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Nom du tournoi" %}</label>
+                            <input type="text" name="name" x-model="name" class="form-input" placeholder="{% trans "Ex: Mon Super Tournoi" %}">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Date" %}</label>
+                            <input type="date" name="date" class="form-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Heure" %}</label>
+                            <input type="time" name="time" class="form-input" step="60">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Lieu (Optionnel)" %}</label>
+                            <input type="text" name="location" class="form-input" placeholder="{% trans "Ex: Boulodrome municipal" %}">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Description (Optionnel)" %}</label>
+                            <textarea name="description" rows="3" class="form-input leading-relaxed" placeholder="{% trans "Ajoutez quelques détails sur l'organisation..." %}"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Navigation -->
+            <div class="flex items-center gap-4 pt-4">
+                <button type="button" x-show="step > 1" @click="step--" class="flex-1 px-8 py-4 rounded-2xl glass font-bold text-white hover:bg-white/5 transition-all text-sm">
+                    {% trans "Précédent" %}
+                </button>
+                <button type="button" x-show="step < 3" @click="step++" :disabled="!sport && step === 1"
+                    class="flex-[2] px-8 py-4 rounded-2xl btn-primary font-bold text-white shadow-xl shadow-blue-500/20 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    {% trans "Continuer" %}
+                </button>
+                <button type="submit" x-show="step === 3"
+                    class="flex-[2] px-8 py-4 rounded-2xl btn-primary font-bold text-white shadow-xl shadow-blue-500/20 transition-all text-sm">
+                    {% trans "Créer le tournois" %}
+                </button>
+            </div>
+
+            <!-- Hidden Fields for hidden state -->
+            <input type="hidden" name="nb_teams" :value="nbTeams">
+            <input type="hidden" name="nb_players_per_team" :value="nbPlayersPerTeam">
+        </form>
+    </div>
+</div>
+
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+    function tournamentForm() {
+        return {
+            step: 1,
+            sport: '',
+            nbTeams: 5,
+            nbPlayersPerTeam: 4,
+            name: '',
+
+            get sportDisplay() {
+                if (this.sport === 'PETANQUE') return '{% trans "Pétanque" %}';
+                if (this.sport === 'GENERIC') return '{% trans "Générique" %}';
+                return '';
+            },
+
+            onSportChange() {
+                if (this.sport === 'PETANQUE') {
+                    this.nbPlayersPerTeam = 2;
+                    this.name = '{% trans "Tournois Pétanque" %}';
+                } else {
+                    this.nbPlayersPerTeam = 4;
+                    this.name = '{% trans "Tournois Générique" %}';
+                }
+            },
+
+            goToStep(n) {
+                if (n === 1) this.step = 1;
+                else if (n === 2 && this.sport) this.step = 2;
+                else if (n === 3 && this.sport) this.step = 3;
+            }
+        }
+    }
+</script>
+
+<style>
+    /* Custom Range Styling */
+    input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #3b82f6;
+        border-radius: 50%;
+        border: 4px solid #0f172a;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        cursor: pointer;
+    }
+
+    .form-input[type="date"]::-webkit-calendar-picker-indicator,
+    .form-input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.5;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

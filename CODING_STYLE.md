@@ -79,6 +79,16 @@ Imports are sorted by `ruff`. The configuration is in `ruff.toml`.
 
 ### Views
 - **Inheritance**: Prefer using TemplateView andFormView whenever possible.
+- **Ids**: Always use public_ids or slugs in urls to prevent exposing internal ids.
+
+### Admin
+
+- **Inheritance**: All admin classes should inherit from `core.admins.BaseAdmin`.
+    - `BaseAdmin` provides standard configurations like `readonly_fields` for `date_created` and `date_updated`.
+- **Configuration**:
+    - Use `list_display` for main fields.
+    - Add `list_filter` for indexed fields that help in narrowing down searches (e.g., status, type, foreign keys).
+    - Use `search_fields` for text-based searches.
 
 ### Security
 - **Authentication**: Use Django authentication.
