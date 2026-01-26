@@ -12,6 +12,8 @@ class TournamentForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-input", "x-model": "name"}),
             "sport": forms.HiddenInput(attrs={"x-model": "sport"}),
+            "nb_teams": forms.HiddenInput(attrs={":value": "nbTeams"}),
+            "nb_players_per_team": forms.HiddenInput(attrs={":value": "nbPlayersPerTeam"}),
             "description": forms.Textarea(attrs={"class": "form-input leading-relaxed", "rows": 3}),
             "location": forms.TextInput(attrs={"class": "form-input"}),
         }
