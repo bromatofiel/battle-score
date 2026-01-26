@@ -64,6 +64,22 @@
         <form method="POST" class="space-y-8">
             {% csrf_token %}
 
+            {% if form.errors %}
+            <div class="glass p-6 rounded-2xl border-2 border-red-500/50 bg-red-500/10 text-red-100 text-sm">
+                <p class="font-bold mb-2">{% trans "Veuillez corriger les erreurs suivantes :" %}</p>
+                <ul class="list-disc ml-5 space-y-1">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Hidden field for sport state handled by Alpine -->
+            {{ form.sport }}
+
             <!-- Step 1: Sport Selection -->
             <div x-show="step === 1" x-transition.opacity.duration.300ms class="space-y-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -140,23 +156,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2 space-y-2">
                             <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Nom du tournoi" %}</label>
-                            <input type="text" name="name" x-model="name" class="form-input" placeholder="{% trans "Ex: Mon Super Tournoi" %}">
+                            {{ form.name }}
                         </div>
-                        <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Date" %}</label>
-                            <input type="date" name="date" class="form-input">
+                            {{ form.date }}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Heure" %}</label>
-                            <input type="time" name="time" class="form-input" step="60">
+                            {{ form.time }}
                         </div>
-                        <div class="md:col-span-2 space-y-2">
                             <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Lieu (Optionnel)" %}</label>
-                            <input type="text" name="location" class="form-input" placeholder="{% trans "Ex: Boulodrome municipal" %}">
+                            {{ form.location }}
                         </div>
                         <div class="md:col-span-2 space-y-2">
                             <label class="block text-sm font-bold text-slate-400 ml-1">{% trans "Description (Optionnel)" %}</label>
-                            <textarea name="description" rows="3" class="form-input leading-relaxed" placeholder="{% trans "Ajoutez quelques détails sur l'organisation..." %}"></textarea>
+                            {{ form.description }}
                         </div>
                     </div>
                 </div>
