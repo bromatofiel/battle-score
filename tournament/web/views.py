@@ -2,9 +2,9 @@ import random
 
 from django.contrib import messages
 from django.shortcuts import redirect
-from tournament.utils import WORLD_CAPITALS
 from tournament.models import Team, Tournament
 from django.views.generic import TemplateView
+from tournament.constants import WORLD_CAPITALS
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.mixins import LoginRequiredMixin
 

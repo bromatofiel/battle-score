@@ -39,8 +39,12 @@ dependencies = [
     "djangorestframework",
     "django-cors-headers",
     "django-model-utils",
-    "tldextract",
     "pillow>=12.1.0",
+    "tldextract~=5.3.0",
+    "colored~=2.3.0",
+    "dateparser~=1.2.0",
+    "python-dateutil==2.9.0.post0",
+    "magicattr~=0.1.6"
 ]
 
 [dependency-groups]

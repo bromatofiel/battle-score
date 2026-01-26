@@ -1,4 +1,5 @@
 from django.db import models
+from core.utils import enum
 from core.models import BaseModel
 from django.conf import settings
 
@@ -8,9 +9,16 @@ class Tournament(BaseModel):
     A tournament with settings.
     """
 
+    SPORTS = enum(
+        PETANQUE=("PETANQUE", "Pétanque"),
+        GENERIC=("GENERIC", "Générique"),
+    )
+
     name = models.CharField(max_length=255)
-    nb_teams = models.PositiveIntegerField(default=0)
-    nb_players_per_team = models.PositiveIntegerField(default=0)
+    sport = models.CharField(max_length=20, choices=SPORTS, default=SPORTS.GENERIC)
+    description = models.TextField(blank=True)
+    nb_teams = models.PositiveIntegerField(default=5)
+    nb_players_per_team = models.PositiveIntegerField(default=4)
     location = models.CharField(max_length=255, blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
     admin = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="managed_tournaments")
@@ -26,6 +34,7 @@ class Team(BaseModel):
 
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name="teams")
     name = models.CharField(max_length=255)
+    number = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.name} ({self.tournament.name})"

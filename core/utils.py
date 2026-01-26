@@ -1,23 +1,21 @@
 import re
-import os
 import sys
-import inspect
-import logging
 import copy
 import json
+import inspect
+import logging
+from math import gcd
+from decimal import Decimal
+from datetime import datetime, timedelta
+from functools import lru_cache
+from contextlib import contextmanager
+
 import colored
 import requests
 import magicattr
-from math import gcd
-from functools import lru_cache
-from decimal import Decimal
-from datetime import timedelta, datetime
-from contextlib import contextmanager
-
 from django.utils import timezone
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from django.template.defaultfilters import slugify  # Used by other imports
 
 logger = logging.getLogger(__name__)
 NBSP = "\u00a0"
@@ -28,7 +26,6 @@ def flatten(lst):
 
 
 def enum(**kwargs):
-
     class Enum(tuple):
         def __contains__(self, item):
             for value, display in self:
