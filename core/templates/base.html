@@ -48,6 +48,34 @@
             background: rgba(30, 41, 59, 0.8);
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-in forwards;
+        }
+        .message-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            width: 100%;
+            transform-origin: left;
+            animation: message-progress 5s linear forwards;
+        }
+        @keyframes message-progress {
+            from { transform: scaleX(1); }
+            to { transform: scaleX(0); }
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -58,40 +86,99 @@
     </div>
 
     <!-- Header / Navbar -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4">
-        <div class="{% if not user.is_authenticated %}max-w-7xl mx-auto{% else %}w-full{% endif %} flex justify-between items-center glass px-8 py-3 rounded-2xl shadow-lg border-white/5">
-            <a href="{% url 'home' %}" class="text-xl md:text-2xl font-bold tracking-tighter text-white flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg btn-primary flex items-center justify-center text-xs shrink-0">BS</span>
-                <span class="text-gradient">Battle Score</span>
-            </a>
+    <nav class="fixed top-0 w-full z-50 px-0 py-0 md:px-6 md:py-4">
+        <div class="{% if not user.is_authenticated %}max-w-7xl mx-auto{% else %}w-full{% endif %} flex justify-between items-center glass px-6 py-4 md:px-8 md:py-3 md:rounded-2xl shadow-lg border-white/5">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'home' %}" class="flex items-center gap-2 group">
+                    <span class="w-8 h-8 rounded-lg btn-primary flex items-center justify-center text-xs shrink-0 font-bold text-white shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">BS</span>
+                    <span class="text-xl md:text-2xl font-bold tracking-tighter text-white transition-all {% if tournament %}hidden md:block{% endif %}">
+                        <span class="text-gradient">Battle Score</span>
+                    </span>
+                </a>
+
+                {% if tournament %}
+                    <span class="w-px h-6 bg-white/10 hidden md:block"></span>
+                    <div class="relative">
+                        <button id="tournament-menu-button" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all group">
+                            <span class="text-sm md:text-lg font-bold text-white truncate max-w-[120px] md:max-w-xs group-hover:text-blue-400">
+                                {{ tournament.name }}
+                            </span>
+                            <svg class="w-4 h-4 text-slate-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Tournament Dropdown Menu -->
+                        <div id="tournament-menu-dropdown" class="absolute left-0 mt-3 w-64 glass rounded-2xl shadow-2xl border-white/10 overflow-hidden hidden transition-all duration-200 transform origin-top-left scale-95 opacity-0 z-[70]">
+                            <div class="p-2 space-y-1">
+                                <a href="{% url 'tournament:settings' tournament.id %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all group">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    <span class="font-semibold">{% trans "Paramètres" %}</span>
+                                </a>
+                                <a href="{% url 'tournament:access' tournament.id %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all group">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                    <span class="font-semibold">{% trans "Accès" %}</span>
+                                </a>
+                                <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all group">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                    <span class="font-semibold">{% trans "Retour" %}</span>
+                                </a>
+                            </div>
+
+                            {% if next_tournaments %}
+                                <div class="border-t border-white/5 my-1 mx-2"></div>
+                                <div class="p-2 space-y-1">
+                                    <p class="px-4 pt-2 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{% trans "Changer de Tournoi" %}</p>
+                                    {% for other in next_tournaments %}
+                                        <a href="{% url 'tournament:teams' other.id %}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-blue-600/10 hover:text-white transition-all group">
+                                            <span class="w-2 h-2 rounded-full bg-blue-500/40 group-hover:bg-blue-400"></span>
+                                            <span class="truncate">{{ other.name }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
             <div class="flex items-center space-x-4 md:space-x-8 text-sm font-medium text-slate-300">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="hidden md:block hover:text-white transition-colors">{% trans "Dashboard" %}</a>
+                    <a href="{% url 'dashboard' %}" class="hidden lg:block hover:text-white transition-colors">{% trans "Dashboard" %}</a>
                     <!-- User Dropdown (Desktop & Mobile) -->
                     <div class="relative">
-                        <button id="user-menu-button" class="px-3 md:px-5 py-2 rounded-xl btn-primary text-white flex items-center gap-2 max-w-[150px] md:max-w-none">
+                        <button id="user-menu-button" class="px-3 md:px-5 py-2 rounded-xl btn-primary text-white flex items-center gap-2 max-w-[150px] md:max-w-none shadow-lg shadow-blue-500/20">
                             <span class="truncate">{{ user.profile.pseudo|default:user.username }}</span>
                             <svg class="w-4 h-4 opacity-70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <!-- Dropdown Menu -->
-                        <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 glass rounded-xl shadow-xl border-white/10 overflow-hidden hidden transition-all duration-200 transform origin-top-right scale-95 opacity-0">
-                            <a href="{% url 'settings' %}" class="block px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-                                {% trans "Paramètres" %}
-                            </a>
-                            <a href="{% url 'logout' %}" class="block px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-colors">
-                                {% trans "Déconnexion" %}
-                            </a>
+                        <!-- User Dropdown Menu -->
+                        <div id="user-menu-dropdown" class="absolute right-0 mt-3 w-56 glass rounded-2xl shadow-2xl border-white/10 overflow-hidden hidden transition-all duration-200 transform origin-top-right scale-95 opacity-0 z-[70]">
+                            <div class="p-2 space-y-1">
+                                <a href="{% url 'settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all group">
+                                    <svg class="w-5 h-5 text-slate-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    <span class="font-semibold">{% trans "Paramètres" %}</span>
+                                </a>
+                                <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all group">
+                                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                    <span class="font-semibold">{% trans "Déconnexion" %}</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            const button = document.getElementById('user-menu-button');
-                            const menu = document.getElementById('user-menu-dropdown');
+                            const userBtn = document.getElementById('user-menu-button');
+                            const userMenu = document.getElementById('user-menu-dropdown');
                             const overlay = document.getElementById('mobile-menu-overlay');
                             const closeBtn = document.getElementById('mobile-menu-close');
 
-                            function toggleDesktopMenu() {
+                            const tourBtn = document.getElementById('tournament-menu-button');
+                            const tourMenu = document.getElementById('tournament-menu-dropdown');
+                            const tourOverlay = document.getElementById('mobile-tournament-overlay');
+                            const tourCloseBtn = document.getElementById('mobile-tournament-close');
+
+                            function toggleDropdown(menu) {
                                 if (!menu) return;
                                 menu.classList.toggle('hidden');
                                 if (!menu.classList.contains('hidden')) {
@@ -105,8 +192,8 @@
                                 }
                             }
 
-                            function closeDesktopMenu() {
-                                if (!menu) return;
+                            function closeDropdown(menu) {
+                                if (!menu || menu.classList.contains('hidden')) return;
                                 menu.classList.remove('scale-100', 'opacity-100');
                                 menu.classList.add('scale-95', 'opacity-0');
                                 setTimeout(() => {
@@ -114,50 +201,59 @@
                                 }, 200);
                             }
 
-                            function openMobileMenu() {
-                                if (!overlay) return;
-                                overlay.classList.remove('hidden');
+                            function openOverlay(el) {
+                                if (!el) return;
+                                el.classList.remove('hidden');
                                 document.body.style.overflow = 'hidden';
                                 requestAnimationFrame(() => {
-                                    overlay.classList.add('opacity-100');
+                                    el.classList.add('opacity-100');
                                 });
                             }
 
-                            function closeMobileMenu() {
-                                if (!overlay) return;
-                                overlay.classList.remove('opacity-100');
+                            function closeOverlay(el) {
+                                if (!el) return;
+                                el.classList.remove('opacity-100');
                                 document.body.style.overflow = '';
                                 setTimeout(() => {
-                                    overlay.classList.add('hidden');
+                                    el.classList.add('hidden');
                                 }, 300);
                             }
 
-                            if (button) {
-                                button.addEventListener('click', (e) => {
+                            if (userBtn) {
+                                userBtn.addEventListener('click', (e) => {
                                     if (window.innerWidth < 768) {
-                                        openMobileMenu();
+                                        openOverlay(overlay);
                                     } else {
                                         e.stopPropagation();
-                                        toggleDesktopMenu();
+                                        closeDropdown(tourMenu);
+                                        toggleDropdown(userMenu);
                                     }
                                 });
                             }
 
-                            if (closeBtn) {
-                                closeBtn.addEventListener('click', closeMobileMenu);
-                            }
-
-                            document.addEventListener('click', (e) => {
-                                if (menu && !menu.contains(e.target) && button && !button.contains(e.target)) {
-                                    closeDesktopMenu();
-                                }
-                            });
-
-                            if (menu) {
-                                menu.querySelectorAll('a').forEach(link => {
-                                    link.addEventListener('click', closeDesktopMenu);
+                            if (tourBtn) {
+                                tourBtn.addEventListener('click', (e) => {
+                                    if (window.innerWidth < 768) {
+                                        openOverlay(tourOverlay);
+                                    } else {
+                                        e.stopPropagation();
+                                        closeDropdown(userMenu);
+                                        toggleDropdown(tourMenu);
+                                    }
                                 });
                             }
+
+                            if (closeBtn) closeBtn.addEventListener('click', () => closeOverlay(overlay));
+                            if (tourCloseBtn) tourCloseBtn.addEventListener('click', () => closeOverlay(tourOverlay));
+
+                            document.addEventListener('click', (e) => {
+                                if (userMenu && !userMenu.contains(e.target) && userBtn && !userBtn.contains(e.target)) {
+                                    closeDropdown(userMenu);
+                                }
+                                if (tourMenu && !tourMenu.contains(e.target) && tourBtn && !tourBtn.contains(e.target)) {
+                                    closeDropdown(tourMenu);
+                                }
+                            });
                         });
                     </script>
                 {% else %}
@@ -170,15 +266,33 @@
         </div>
     </nav>
 
-    <main class="pt-32">
+    <main class="pt-32 {% if user.is_authenticated %}pb-32 md:pb-0{% endif %}">
         {% if messages %}
             <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
                 {% for message in messages %}
-                    <div class="px-6 py-3 rounded-xl glass border-l-4 {% if message.tags == 'error' %}border-red-500 text-red-200{% else %}border-green-500 text-green-200{% endif %} shadow-2xl animate-fade-in">
+                    <div class="message-banner relative px-6 py-3 rounded-xl glass border-l-4 {% if message.tags == 'error' %}border-red-500 text-red-200{% else %}border-green-500 text-green-200{% endif %} shadow-2xl animate-fade-in overflow-hidden">
                         {{ message }}
+                        <div class="message-progress"></div>
                     </div>
                 {% endfor %}
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const messages = document.querySelectorAll('.message-banner');
+                    messages.forEach(msg => {
+                        setTimeout(() => {
+                            msg.classList.remove('animate-fade-in');
+                            msg.classList.add('animate-fade-out');
+                            setTimeout(() => {
+                                msg.remove();
+                                if (document.querySelectorAll('.message-banner').length === 0) {
+                                    msg.parentElement.remove();
+                                }
+                            }, 300);
+                        }, 5000);
+                    });
+                });
+            </script>
         {% endif %}
 
         {% block content %}{% endblock %}
@@ -186,18 +300,36 @@
 
     {% if user.is_authenticated %}
         {% if tournament %}
-            <!-- Mobile Bottom Navbar -->
+            <!-- Mobile Bottom Navbar (Tournament Context) -->
             <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2">
                 <div class="glass rounded-2xl border-white/10 flex justify-around items-center py-2 px-4 shadow-2xl backdrop-blur-xl">
-                    <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors py-2">
+                    <a href="{% url 'tournament:teams' tournament.id %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'teams' %}text-blue-400{% else %}text-slate-400{% endif %} hover:text-white transition-colors py-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        <span class="text-[10px] font-medium">{% trans "Équipes" %}</span>
+                    </a>
+                    <a href="{% url 'tournament:participants' tournament.id %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'participants' %}text-purple-400{% else %}text-slate-400{% endif %} hover:text-white transition-colors py-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <span class="text-[10px] font-medium">{% trans "Participants" %}</span>
+                    </a>
+                    <a href="{% url 'tournament:matches' tournament.id %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'matches' %}text-emerald-400{% else %}text-slate-400{% endif %} hover:text-white transition-colors py-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span class="text-[10px] font-medium">{% trans "Matches" %}</span>
+                    </a>
+                </div>
+            </nav>
+        {% else %}
+            <!-- Mobile Bottom Navbar (General Context) -->
+            <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2">
+                <div class="glass rounded-2xl border-white/10 flex justify-around items-center py-2 px-4 shadow-2xl backdrop-blur-xl">
+                    <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-400{% else %}text-slate-400{% endif %} hover:text-white transition-colors py-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         <span class="text-[10px] font-medium">{% trans "Accueil" %}</span>
                     </a>
-                    <a href="{% url 'tournament_create' %}" class="flex flex-col items-center">
+                    <a href="{% url 'tournament:create' %}" class="flex flex-col items-center">
                         <div class="w-12 h-12 rounded-xl btn-primary flex items-center justify-center text-white shadow-lg shadow-blue-500/40">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         </div>
-                        <span class="text-[10px] font-medium mt-1">{% trans "Ajouter" %}</span>
+                        <span class="text-[10px] font-medium mt-1">{% trans "Créer" %}</span>
                     </a>
                     <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors py-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -207,13 +339,70 @@
             </nav>
         {% endif %}
 
-        <!-- Fullscreen Mobile Menu Overlay -->
+        <!-- Fullscreen Tournament Menu Overlay (Mobile) -->
+        {% if tournament %}
+        <div id="mobile-tournament-overlay" class="fixed inset-0 z-[60] bg-slate-950 hidden transition-all duration-300 opacity-0">
+            <div class="h-full flex flex-col p-8">
+                <div class="flex justify-between items-center mb-12">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-blue-500/20">BS</div>
+                        <span class="text-xl font-bold text-white">{{ tournament.name }}</span>
+                    </div>
+                    <button id="mobile-tournament-close" class="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest ml-4 mb-4">{% trans "Gestion" %}</p>
+                        <div class="space-y-2">
+                            <a href="{% url 'tournament:settings' tournament.id %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <span class="font-medium">{% trans "Paramètres" %}</span>
+                            </a>
+                            <a href="{% url 'tournament:access' tournament.id %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+                                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                <span class="font-medium">{% trans "Accès" %}</span>
+                            </a>
+                            <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                <span class="font-medium">{% trans "Retour au Dashboard" %}</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if next_tournaments %}
+                    <div class="mt-4">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest ml-4 mb-4">{% trans "Changer de Tournoi" %}</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            {% for other in next_tournaments %}
+                                <a href="{% url 'tournament:teams' other.id %}" class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    <span class="font-medium truncate">{{ other.name }}</span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-auto py-8 text-center">
+                    <p class="text-sm text-slate-500">Battle Score v1.0</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Fullscreen Mobile User Menu Overlay -->
         <div id="mobile-menu-overlay" class="fixed inset-0 z-[60] bg-slate-950 hidden transition-all duration-300 opacity-0">
             <div class="h-full flex flex-col p-8">
                 <div class="flex justify-between items-center mb-12">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center text-xs font-bold text-white">BS</div>
-                        <span class="text-xl font-bold text-white">Battle Score</span>
+                        <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-blue-500/20">BS</div>
+                        <span class="text-xl font-bold text-white">
+                            <span class="text-gradient">{{ user.profile.pseudo|default:user.username }}</span>
+                        </span>
                     </div>
                     <button id="mobile-menu-close" class="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>

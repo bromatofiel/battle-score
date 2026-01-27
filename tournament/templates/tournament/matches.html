@@ -1,0 +1,53 @@
+{% extends "tournament/tournament_base.html" %}
+{% load i18n %}
+
+{% block title %}{{ tournament.name }} - {% trans "Matches" %}{% endblock %}
+
+{% block tournament_content %}
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">{% trans "Matches et Résultats" %}</h1>
+            <p class="text-slate-400">{% trans "Suivez le déroulement de la compétition." %}</p>
+        </div>
+        <button class="px-6 py-2.5 rounded-xl btn-primary text-sm font-bold text-white shadow-lg shadow-blue-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            {% trans "Générer" %}
+        </button>
+    </div>
+
+    <!-- Matches List -->
+    <div class="space-y-4">
+        {% for match in matches %}
+            <div class="glass p-6 rounded-3xl border-white/5 hover:border-emerald-500/20 transition-all group flex items-center gap-8">
+                <div class="w-12 text-center">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">#{{ match.ordering }}</span>
+                </div>
+                <!-- Team A vs Team B placeholder -->
+                <div class="flex-1 flex justify-between items-center px-12">
+                    <div class="text-right flex-1">
+                        <span class="font-bold text-white text-lg">Équipe A</span>
+                    </div>
+                    <div class="px-8 flex flex-col items-center">
+                        <span class="text-xs font-bold text-slate-500 uppercase">VS</span>
+                        <div class="flex gap-2 mt-2">
+                            <span class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-mono font-bold text-xl text-white">0</span>
+                            <span class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-mono font-bold text-xl text-white">0</span>
+                        </div>
+                    </div>
+                    <div class="text-left flex-1">
+                        <span class="font-bold text-white text-lg">Équipe B</span>
+                    </div>
+                </div>
+                <button class="px-4 py-2 rounded-xl bg-white/5 text-xs font-bold text-white hover:bg-white/10 transition-colors">
+                    {% trans "Saisir Score" %}
+                </button>
+            </div>
+        {% empty %}
+            <div class="py-12 text-center glass rounded-3xl border-dashed border-white/10">
+                <p class="text-slate-500">{% trans "Les matches n'ont pas encore été générés." %}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

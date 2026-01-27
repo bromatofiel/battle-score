@@ -101,10 +101,19 @@ class AccountSettingsView(LoginRequiredMixin, View):
             "client_form": kwargs.get("client_form", ClientUpdateForm(instance=client)),
             "delete_form": kwargs.get("delete_form", DeleteAccountForm()),
             "password_form": kwargs.get("password_form", PasswordUpdateForm()),
+            "next_url": self.request.session.get("settings_next_url", "dashboard"),
         }
         return context
 
     def get(self, request):
+        # Capture the referer to redirect back after success
+        # But only if it's not the settings page itself
+        referer = request.META.get("HTTP_REFERER")
+        if referer and "settings" not in referer and "menu" not in referer:
+            request.session["settings_next_url"] = referer
+        elif not request.session.get("settings_next_url"):
+            request.session["settings_next_url"] = "dashboard"
+
         return render(request, self.template_name, self.get_context_data())
 
     def post(self, request):
@@ -161,7 +170,8 @@ class AccountSettingsView(LoginRequiredMixin, View):
 
         if success:
             messages.success(request, _("Modifications enregistrées avec succès."))
-            return redirect("settings")
+            next_url = request.session.pop("settings_next_url", "dashboard")
+            return redirect(next_url)
 
         context = {
             "user_form": user_form,

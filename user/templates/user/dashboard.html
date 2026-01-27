@@ -19,29 +19,35 @@
                         <span class="w-2 h-8 rounded-full bg-blue-500"></span>
                         {% trans "Mes Tournois (Admin)" %}
                     </h2>
-                    <a href="{% url 'tournament_create' %}" class="px-4 py-2 rounded-xl btn-primary text-xs font-bold text-white shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                    <a href="{% url 'tournament:create' %}" class="px-4 py-2 rounded-xl btn-primary text-xs font-bold text-white shadow-lg shadow-blue-500/20 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span class="hidden sm:inline">{% trans "Créer un Tournoi" %}</span>
                     </a>
                 </div>
                 <div class="space-y-4">
                     {% for tournament in managed_tournaments %}
-                        <div class="glass p-6 rounded-2xl border-white/5 hover:border-blue-500/30 transition-all group">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">{{ tournament.name }}</h3>
-                                    <p class="text-sm text-slate-500 mt-1">
-                                        {{ tournament.location|default:"Lieu non défini" }} • {{ tournament.datetime|date:"d/m/Y"|default:"Date non définie" }}
-                                    </p>
+                        <a href="{% url 'tournament:teams' tournament.id %}" class="block glass p-6 rounded-2xl border-white/5 hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/[0.02] transition-colors"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">{{ tournament.name }}</h3>
+                                        <p class="text-sm text-slate-500 mt-1">
+                                            {{ tournament.location|default:"Lieu non défini" }} • {{ tournament.datetime|date:"d/m/Y"|default:"Date non définie" }}
+                                        </p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-wider">
+                                        {{ tournament.nb_teams }} {% trans "Équipes" %}
+                                    </span>
                                 </div>
-                                <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-wider">
-                                    {{ tournament.nb_teams }} {% trans "Équipes" %}
-                                </span>
+                                <div class="mt-6 flex justify-end">
+                                    <span class="text-xs font-semibold text-slate-400 group-hover:text-white transition-colors flex items-center gap-1">
+                                        {% trans "Gérer" %}
+                                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="mt-6 flex justify-end gap-3">
-                                <a href="#" class="text-xs font-semibold text-slate-400 hover:text-white transition-colors">{% trans "Gérer" %}</a>
-                            </div>
-                        </div>
+                        </a>
                     {% empty %}
                         <div class="glass p-8 rounded-2xl border-dashed border-white/10 text-center">
                             <p class="text-slate-500 text-sm">{% trans "Vous n'avez pas encore créé de tournoi." %}</p>
@@ -64,22 +70,28 @@
                 </div>
                 <div class="space-y-4">
                     {% for participation in participations %}
-                        <div class="glass p-6 rounded-2xl border-white/5 hover:border-purple-500/30 transition-all group">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">{{ participation.tournament.name }}</h3>
-                                    <p class="text-sm text-slate-500 mt-1">
-                                        {% trans "Rôle" %} : {{ participation.get_role_display }} • {% trans "Équipe" %} : {{ participation.team.name|default:"Non assigné" }}
-                                    </p>
+                        <a href="{% url 'tournament:teams' participation.tournament.id %}" class="block glass p-6 rounded-2xl border-white/5 hover:border-purple-500/30 transition-all group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-purple-500/0 group-hover:bg-purple-500/[0.02] transition-colors"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">{{ participation.tournament.name }}</h3>
+                                        <p class="text-sm text-slate-500 mt-1">
+                                            {% trans "Rôle" %} : {{ participation.get_role_display }} • {% trans "Équipe" %} : {{ participation.team.name|default:"Non assigné" }}
+                                        </p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold uppercase tracking-wider">
+                                        {% trans "Participant" %}
+                                    </span>
                                 </div>
-                                <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold uppercase tracking-wider">
-                                    {% trans "Participant" %}
-                                </span>
+                                <div class="mt-6 flex justify-end">
+                                    <span class="text-xs font-semibold text-slate-400 group-hover:text-white transition-colors flex items-center gap-1">
+                                        {% trans "Voir Score" %}
+                                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="mt-6 flex justify-end gap-3">
-                                <a href="#" class="text-xs font-semibold text-slate-400 hover:text-white transition-colors">{% trans "Voir Score" %}</a>
-                            </div>
-                        </div>
+                        </a>
                     {% empty %}
                         <div class="glass p-8 rounded-2xl border-dashed border-white/10 text-center">
                             <p class="text-slate-500 text-sm">{% trans "Vous ne participez à aucun tournoi pour le moment." %}</p>

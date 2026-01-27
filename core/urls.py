@@ -3,5 +3,6 @@ from django.contrib import admin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("tournament/", include("tournament.web.urls")),
     path("", include("user.web.urls")),
 ]

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="px-6 pb-12">
+    <div class="max-w-[1600px] mx-auto">
+        <div class="flex flex-col md:flex-row gap-12">
+            <!-- Sidebar (Desktop) -->
+            <aside class="hidden md:block w-72 shrink-0">
+                <nav class="sticky top-32 space-y-2">
+                    <a href="{% url 'tournament:teams' tournament.id %}" class="flex items-center gap-3 px-6 py-4 rounded-2xl {% if request.resolver_match.url_name == 'teams' %}glass border-blue-500/30 text-white bg-blue-500/5{% else %}glass text-slate-300 hover:text-white hover:bg-white/5{% endif %} transition-all group">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        <span class="font-bold text-sm">{% trans "Équipes" %}</span>
+                    </a>
+                    <a href="{% url 'tournament:participants' tournament.id %}" class="flex items-center gap-3 px-6 py-4 rounded-2xl {% if request.resolver_match.url_name == 'participants' %}glass border-purple-500/30 text-white bg-purple-500/5{% else %}glass text-slate-300 hover:text-white hover:bg-white/5{% endif %} transition-all group">
+                        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <span class="font-bold text-sm">{% trans "Participants" %}</span>
+                    </a>
+                    <a href="{% url 'tournament:matches' tournament.id %}" class="flex items-center gap-3 px-6 py-4 rounded-2xl {% if request.resolver_match.url_name == 'matches' %}glass border-emerald-500/30 text-white bg-emerald-500/5{% else %}glass text-slate-300 hover:text-white hover:bg-white/5{% endif %} transition-all group">
+                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span class="font-bold text-sm">{% trans "Matches" %}</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 min-w-0">
+                {% block tournament_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
