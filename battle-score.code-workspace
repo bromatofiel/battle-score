@@ -16,10 +16,7 @@
                 "source.organizeImports.ruff": "explicit"
             }
         },
-        "ruff.lint.args": [
-            "--config",
-            "ruff.toml"
-        ],
+        "ruff.configuration": "ruff.toml",
         "files.associations": {
             "**/*.html": "django-html",
             "**/templates/**/*.html": "django-html"
