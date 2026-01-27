@@ -26,29 +26,29 @@
                         <tr class="group transition-all hover:bg-white/[0.02]">
                             <td class="px-8 py-5">
                                 <div class="flex items-center">
-                                    {% if forloop.counter == 1 %}
+                                    {% if item.rank == 1 %}
                                         <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold shadow-lg shadow-amber-500/10">
                                             1
                                         </div>
-                                    {% elif forloop.counter == 2 %}
+                                    {% elif item.rank == 2 %}
                                         <div class="w-8 h-8 rounded-lg bg-slate-400/20 border border-slate-400/30 flex items-center justify-center text-slate-300 font-bold shadow-lg shadow-slate-400/10">
                                             2
                                         </div>
-                                    {% elif forloop.counter == 3 %}
+                                    {% elif item.rank == 3 %}
                                         <div class="w-8 h-8 rounded-lg bg-amber-700/20 border border-amber-700/30 flex items-center justify-center text-amber-600 font-bold shadow-lg shadow-amber-700/10">
                                             3
                                         </div>
                                     {% else %}
-                                        <span class="text-slate-500 font-medium ml-3">{{ forloop.counter }}</span>
+                                        <span class="text-slate-500 font-medium ml-3">{{ item.rank }}</span>
                                     {% endif %}
                                 </div>
                             </td>
                             <td class="px-8 py-5">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-xl glass border-white/10 flex items-center justify-center text-lg font-bold
-                                        {% if forloop.counter == 1 %}text-amber-500
-                                        {% elif forloop.counter == 2 %}text-slate-300
-                                        {% elif forloop.counter == 3 %}text-amber-600
+                                        {% if item.rank == 1 %}text-amber-500
+                                        {% elif item.rank == 2 %}text-slate-300
+                                        {% elif item.rank == 3 %}text-amber-600
                                         {% else %}text-white{% endif %}">
                                         {{ item.team.name|slice:":1"|upper }}
                                     </div>
@@ -60,9 +60,9 @@
                             </td>
                             <td class="px-8 py-5 text-right">
                                 <span class="text-2xl font-bold
-                                    {% if forloop.counter == 1 %}text-amber-500
-                                    {% elif forloop.counter == 2 %}text-slate-300
-                                    {% elif forloop.counter == 3 %}text-amber-600
+                                    {% if item.rank == 1 %}text-amber-500
+                                    {% elif item.rank == 2 %}text-slate-300
+                                    {% elif item.rank == 3 %}text-amber-600
                                     {% else %}text-white{% endif %}">
                                     {{ item.total_points }}
                                 </span>

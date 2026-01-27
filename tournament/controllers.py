@@ -40,7 +40,18 @@ class GenericSportController(BaseSportController):
             rankings.append({"team": team, "total_points": team_points.get(team.id, 0)})
 
         # Sort by points descending
-        return sorted(rankings, key=lambda x: x["total_points"], reverse=True)
+        sorted_rankings = sorted(rankings, key=lambda x: x["total_points"], reverse=True)
+
+        # Calculate ranks with ties (competitive ranking)
+        current_rank = 0
+        current_points = -1
+        for i, item in enumerate(sorted_rankings):
+            if item["total_points"] != current_points:
+                current_rank = i + 1
+                current_points = item["total_points"]
+            item["rank"] = current_rank
+
+        return sorted_rankings
 
 
 class PetanqueSportController(GenericSportController):

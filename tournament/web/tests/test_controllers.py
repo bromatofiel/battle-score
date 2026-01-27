@@ -80,3 +80,26 @@ class TestRankingCalculations(TestCase):
         self.assertEqual(len(rankings), 3)
         for r in rankings:
             self.assertEqual(r["total_points"], 0)
+            self.assertEqual(r["rank"], 1)  # All tied at 1st
+
+    def test_generic_ranking_multi_tie(self):
+        # T1 wins vs T2 (T1:1, T2:0)
+        m1 = Match.objects.create(tournament=self.tournament, ordering=1)
+        Score.objects.create(match=m1, team=self.team1, value=10)
+        Score.objects.create(match=m1, team=self.team2, value=0)
+
+        # T3 wins (against nobody in particular, just to get a point)
+        m2 = Match.objects.create(tournament=self.tournament, ordering=2)
+        Score.objects.create(match=m2, team=self.team3, value=10)
+        Score.objects.create(match=m2, team=self.team2, value=0)
+
+        # Result: T1: 1, T2: 3, T3: 1
+        # T1 and T3 should be rank 1, T2 should be rank 3
+
+        controller = get_sport_controller(Tournament.SPORTS.GENERIC)
+        rankings = controller.get_team_scores(self.tournament)
+
+        ranking_map = {r["team"].id: r["rank"] for r in rankings}
+        self.assertEqual(ranking_map[self.team1.id], 1)
+        self.assertEqual(ranking_map[self.team3.id], 1)
+        self.assertEqual(ranking_map[self.team2.id], 3)
